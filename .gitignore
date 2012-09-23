@@ -1,3 +1,7 @@
+a.out
+*.swo
+*.swp
+
 # Compiled Object files
 *.slo
 *.lo
