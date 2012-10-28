@@ -1,6 +1,8 @@
 a.out
 *.swo
 *.swp
+.tup
+build
 
 # Compiled Object files
 *.slo

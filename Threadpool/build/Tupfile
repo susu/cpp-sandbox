@@ -1,0 +1,34 @@
+
+CXXFLAGS= -Wall -Werror -std=c++11 -pthread
+INCLUDE= ../include
+SRC= ../src
+TST= ../test
+TEST_RUNNER= test_runner
+
+THREAD_LIB= Thread
+
+LIBS= libthread.so
+
+!cxx = |> g++ -fPIC $(CXXFLAGS) -I$(INCLUDE) -c %f -o %o |>
+!cxxtestgen = |> cxxtestgen --error-printer -o %o %f |> 
+
+!o2bin = |> g++ %f $(CXXFLAGS) -L. -lthread -Wl,-R./ -o %o |>
+!o2shared = |> g++ -shared %f -o %o |>
+
+: foreach $(SRC)/$(THREAD_LIB).cpp |> !cxx |> %B.o
+
+#: $(SRC)/main.cpp |> !cxx |> %B.o
+
+# production lib
+: $(THREAD_LIB).o |> !o2shared |> libthread.so
+
+# production binary
+#: main.o $(LIBS) |> !o2bin |> hello_bin
+
+# generating test into one cpp
+: $(TST)/*.hpp |> !cxxtestgen |> $(TEST_RUNNER).cpp
+: $(TEST_RUNNER).cpp  |> !cxx |> $(TEST_RUNNER).o
+
+: $(TEST_RUNNER).o $(LIBS) |> !o2bin |> test_all_stuff
+
+
