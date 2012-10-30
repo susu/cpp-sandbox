@@ -1,19 +1,15 @@
 
-CXXFLAGS= -Wall -Werror -std=c++11 -pthread
-INCLUDE= ../include
-SRC= ../src
-TST= ../test
+include_rules
+
 TEST_RUNNER= test_runner
 
 THREAD_LIB= Thread
 
 LIBS= libthread.so
 
-!cxx = |> g++ -fPIC $(CXXFLAGS) -I$(INCLUDE) -c %f -o %o |>
-!cxxtestgen = |> cxxtestgen --error-printer -o %o %f |> 
+LINKED_LIBS= -lthread
 
-!o2bin = |> g++ %f $(CXXFLAGS) -L. -lthread -Wl,-R./ -o %o |>
-!o2shared = |> g++ -shared %f -o %o |>
+!o2bin = |> g++ %f $(CXXFLAGS) -L. $(LINKED_LIBS) -Wl,-R./ -o %o |>
 
 : foreach $(SRC)/$(THREAD_LIB).cpp |> !cxx |> %B.o
 
@@ -31,4 +27,5 @@ LIBS= libthread.so
 
 : $(TEST_RUNNER).o $(LIBS) |> !o2bin |> test_all_stuff
 
+: test_all_stuff |> ./test_all_stuff |>
 

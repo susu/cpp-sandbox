@@ -1,0 +1,11 @@
+
+CXXFLAGS+= -Wall -Werror -std=c++11 -pthread
+
+INCLUDE= ../include
+SRC= ../src
+TST= ../test
+
+!cxx = |> g++ -fPIC $(CXXFLAGS) -I$(INCLUDE) -c %f -o %o |>
+!cxxtestgen = |> cxxtestgen --error-printer -o %o %f |> 
+!o2shared = |> g++ -shared %f -o %o |>
+

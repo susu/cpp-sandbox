@@ -1,0 +1,21 @@
+include_rules
+
+CXXFLAGS+= -I../../igloo
+TEST_RUNNER=Runner
+
+TARGET_LIB=atomic
+
+LIB=Atomic
+LINKED_LIBS= -l$(TARGET_LIB)
+
+!o2bin = |> g++ %f $(CXXFLAGS) -L. $(LINKED_LIBS) -Wl,-R./ -o %o |>
+
+: foreach $(SRC)/$(LIB).cpp |> !cxx |> %B.o
+
+: $(LIB).o |> !o2shared |> lib$(TARGET_LIB).so
+
+# igloo-test, no need of external generation
+: $(TST)/$(TEST_RUNNER).cpp  |> !cxx |> $(TEST_RUNNER).o
+: $(TEST_RUNNER).o lib$(TARGET_LIB).so |> !o2bin |> test_all_stuff
+
+: test_all_stuff |> ./test_all_stuff |>
