@@ -1,31 +1,21 @@
-
 include_rules
 
-TEST_RUNNER= test_runner
+CXXFLAGS+= -I../../igloo
+TEST_RUNNER=Runner
 
-THREAD_LIB= Thread
+TARGET_LIB=thread
 
-LIBS= libthread.so
-
-LINKED_LIBS= -lthread
+LIB=Thread
+LINKED_LIBS= -l$(TARGET_LIB)
 
 !o2bin = |> g++ %f $(CXXFLAGS) -L. $(LINKED_LIBS) -Wl,-R./ -o %o |>
 
-: foreach $(SRC)/$(THREAD_LIB).cpp |> !cxx |> %B.o
+: foreach $(SRC)/$(LIB).cpp |> !cxx |> %B.o
 
-#: $(SRC)/main.cpp |> !cxx |> %B.o
+: $(LIB).o |> !o2shared |> lib$(TARGET_LIB).so
 
-# production lib
-: $(THREAD_LIB).o |> !o2shared |> libthread.so
 
-# production binary
-#: main.o $(LIBS) |> !o2bin |> hello_bin
-
-# generating test into one cpp
-: $(TST)/*.hpp |> !cxxtestgen |> $(TEST_RUNNER).cpp
-: $(TEST_RUNNER).cpp  |> !cxx |> $(TEST_RUNNER).o
-
-: $(TEST_RUNNER).o $(LIBS) |> !o2bin |> test_all_stuff
+: $(TST)/$(TEST_RUNNER).cpp  |> !cxx |> $(TEST_RUNNER).o
+: $(TEST_RUNNER).o lib$(TARGET_LIB).so |> !o2bin |> test_all_stuff
 
 : test_all_stuff |> ./test_all_stuff |>
-

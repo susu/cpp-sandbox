@@ -1,4 +1,4 @@
-#include <cxxtest/TestSuite.h>
+#include <igloo/igloo.h>
 
 #include <Thread.hpp>
 
@@ -29,19 +29,17 @@ class DummyThread : public rahu::Thread
     std::thread::id m_runnerThreadId;
 };
 
-class TestThread : public CxxTest::TestSuite
+using namespace igloo;
+
+Context(a_thread)
 {
-  public:
-    void test_it_should_run_on_separate_thread()
-    {
-      // Arrange
-      DummyThread thr;
-      // Act
-      thr.start();
-      thr.join();
-      // Assert
-      TS_ASSERT( thr.isRan() );
-      TS_ASSERT_DIFFERS( thr.getRunnerThreadId(), std::this_thread::get_id() );
-      thr.join();
-    }
+  Spec(should_run_on_separate_thread)
+  {
+    thread.start();
+    thread.join();
+
+    Assert::That( thread.isRan(), Equals(true));
+    Assert::That( thread.getRunnerThreadId(), !Equals(std::this_thread::get_id()) );
+  }
+  DummyThread thread;
 };
