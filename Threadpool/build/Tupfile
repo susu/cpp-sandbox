@@ -5,14 +5,13 @@ TEST_RUNNER=Runner
 
 TARGET_LIB=thread
 
-LIB=Thread
 LINKED_LIBS= -l$(TARGET_LIB)
 
 !o2bin = |> g++ %f $(CXXFLAGS) -L. $(LINKED_LIBS) -Wl,-R./ -o %o |>
 
-: foreach $(SRC)/$(LIB).cpp |> !cxx |> %B.o
+: foreach $(SRC)/*.cpp |> !cxx |> %B.o {objs}
 
-: $(LIB).o |> !o2shared |> lib$(TARGET_LIB).so
+: {objs} |> !o2shared |> lib$(TARGET_LIB).so
 
 
 : $(TST)/$(TEST_RUNNER).cpp  |> !cxx |> $(TEST_RUNNER).o

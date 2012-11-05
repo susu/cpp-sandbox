@@ -1,5 +1,6 @@
 #include <igloo/igloo.h>
 #include "TestThread.hpp"
+#include "TestMessageHandlerInterface.hpp"
 
 int main()
 {
